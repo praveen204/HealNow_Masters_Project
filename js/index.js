@@ -17,7 +17,7 @@ var app = {
              StatusBar.styleDefault();
         }
         // Init Bit6 SDK
-        var opts = {'apikey': '3qio1-DzKnISagC0Of'}; // TODO: insert your API key here
+        var opts = {'apikey': 'put ur api key here'}; // TODO: insert your API key here
         var b6 = Bit6.init(opts);
         // Prepare the app
         //initApp(b6, true);
