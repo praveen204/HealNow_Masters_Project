@@ -1,0 +1,42 @@
+<div class="login-background">
+  <img src="./images/sitebg.png" />
+  <section class="navbar  navbar-default navbar-fixed-top justify-content-between">
+	<div class="navbar-brand">
+		Heal Now
+	</div>
+	<br>
+</section>
+  <div class="row">
+    <div class="col-xs-12">
+      <a ng-click="navigateToHome()">Back to home</a>
+    </div>
+  </div>
+  <div class="alert alert-danger" role="alert" ng-if="alert.display">
+	{{alert.message}}
+  </div>
+  <form name="loginForm">
+    <div class="row">
+      <div class="col-xs-12">
+        UserName: <input type="text" ng-model="user.username" placeholder="Enter your email" class="form-control" required />
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        Password: <input type="password" ng-model="user.password" class="form-control" required />
+      </div>
+	  <div class="col-xs-12">
+       <p>Note: Enter with you registed emailId as username and password to login</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <button type="submit" ng-click="validateUserAndNavigate()" ng-disabled="!loginForm.$valid" class="btn btn-primary">ENTER</button><br>
+      </div>
+    </div>
+  </form>
+  <div class="row">
+    <div class="col-xs-12">
+      <p>New User? <a ng-click="navigateToSignup()">Signup here</a></p>
+    </div>
+  </div>
+ </div>

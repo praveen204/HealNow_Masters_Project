@@ -1,0 +1,181 @@
+<div class="registration-background">
+<br>
+  <img src="./images/sitebg.png" />
+  <section class="navbar  navbar-default navbar-fixed-top justify-content-between">
+	<div class="navbar-brand">
+		Heal Now
+	</div>
+	<br>
+</section>
+  <div class="alert alert-danger" role="alert" ng-if="alert.display && alert.type=== 'failed'">
+	{{alert.message}}
+  </div>
+  <div class="alert alert-dark" role="alert" ng-if="alert.display && alert.type!== 'failed'">
+	{{alert.message}}
+  </div>
+<form name="registrationForm" class="registration">
+  <div class="row">
+    <div class="col-xs-4">
+      Name:
+    </div>
+    <div class="col-xs-8">
+      <input type="text" ng-model="user.name" class="form-control" required />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">
+      Password:
+    </div>
+    <div class="col-xs-8">
+      <input type="password" ng-model="user.password" maxlength="8" class="form-control" required />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">
+      Re-password:
+    </div>
+    <div class="col-xs-8">
+      <input type="password" class="form-control" ng-model="repassword" maxlength="8" required />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">
+      Email:
+    </div>
+    <div class="col-xs-8">
+      <input type="email" ng-model="user.email" class="form-control" required />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">
+      Phone:
+    </div>
+    <div class="col-xs-8">
+      <input type="tel" ng-model="user.phoneNumber" class="form-control" required />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-4">
+      Role:
+    </div>
+    <div class="col-xs-8">
+      <!--<label class="form-check-label">
+        <input type="radio" value="1" class="form-check-input" ng-model="user.roleId" name="inlineRoleOptions" /> Doctor
+      </label>
+      <label class="form-check-label">
+        <input type="radio" value="2" class="form-check-input" ng-model="user.roleId" name="inlineRoleOptions" /> Patient
+      </label>-->
+	  <label class="form-check-label" ng-repeat="r in roles">
+        <input type="radio" ng-change="checkForDoctorRole()" value="{{r.id}}" class="form-check-input" ng-model="user.roleId" name="inlineRoleOptions" required> {{r.role}}<br>
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12" ng-if="!isDoctor && isDoctor !== undefined">
+      <h4>Addition Patient Details</h4>
+      <div class="row">
+        <div class="col-xs-4">
+          Age:
+        </div>
+        <div class="col-xs-8">
+          <input type="number" ng-model="user.age" min="1" max="100"  class="form-control" required />
+        </div>
+      </div>
+       <div class="row">
+        <div class="col-xs-4">
+          Weight:
+        </div>
+        <div class="col-xs-8">
+          <input type="number" ng-model="user.weight" min="1" max="100" class="form-control" required />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          Height:
+        </div>
+        <div class="col-xs-8">
+          <input type="number" ng-model="user.height" min="1" max="250" class="form-control" required />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          Gender:
+        </div>
+        <div class="col-xs-8">
+          <select class="form-control" ng-model="user.gender" required>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          Location:
+        </div>
+        <div class="col-xs-8">
+          <input type="text" class="form-control" />
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12" ng-if="!!isDoctor">
+      <h4>Additional Doctor Details</h4>
+      <div class="row">
+        <div class="col-xs-4">
+          Age:
+        </div>
+        <div class="col-xs-8">
+          <input type="number" ng-model="user.age" min="1" max="100" class="form-control" required />
+        </div>
+      </div>
+       <div class="row">
+        <div class="col-xs-4">
+          Specialization:
+        </div>
+        <div class="col-xs-8">
+          <!--<input type="text" ng-model="user.specializationId" class="form-control" />-->
+		  <select class="form-control" ng-model="user.specializationId" required>
+            <option ng-repeat="category in categories" value="{{category.id}}">{{category.specialization}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          Experience:
+        </div>
+        <div class="col-xs-8">
+          <input type="number" class="form-control" min="1" max="50" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          Location:
+        </div>
+        <div class="col-xs-8">
+          <input type="text" class="form-control" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-4">
+          Upload certificates:
+        </div>
+        <div class="col-xs-8">
+          <label class="custom-file">
+            <input type="file" id="file2" class="custom-file-input" />
+            <span class="custom-file-control"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row text-center">
+		<div class="col-xs-12">
+			<button type="submit" class="btn btn-primary" ng-disabled="!registrationForm.$valid" ng-click="registerUser()">SIGNUP</button><br>
+		</div>
+	</div>
+</form>
+<div class="row">
+	<div class="col-xs-12">
+		<p>Already Registered? <a ng-click="navigateToLogin()">Login here</a></p>
+	</div>
+</div>
+</div>

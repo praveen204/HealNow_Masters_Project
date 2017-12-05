@@ -1,0 +1,359 @@
+<div class="application-background">
+  <img src="./images/background.png" />
+  
+  <section class="navbar navbar-default navbar-fixed-top justify-content-between">
+	<div class="navbar-brand">
+		Heal Now
+	</div>
+	<div style="float:right;top: 5px; position: relative;">
+		<a><i class="fa fa-user-circle-o fa-2x"></i></a><!--ng-click="navigateToUserDetails()"-->
+		<button type="button" ng-click="logoutUser()"><i class="fa fa-sign-out fa-2x"></i></button>
+	</div>
+	<br>
+</section>
+  <div class="application-content">
+	<div class="alert alert-dark" role="alert" ng-if="alert.display">
+	{{alert.message}}
+  </div>
+  
+  <!-- Incoming Call alert -->
+          <!--<div class="alert alert-warning fade in hidden" id="incomingCall">
+            <h4 id="incomingCallFrom">John is calling...</h4>
+            <p id="incomingCallInfo">Do you dare to answer this call?</p>
+            <p>
+              <button type="button" class="btn btn-success" id="answerVideo">Video</button>
+              <button type="button" class="btn btn-success" id="answerAudio">Audio</button>
+              <button type="button" class="btn btn-danger" id="reject">Reject</button>
+            </p>
+          </div>-->
+          
+            
+  
+  
+  
+	<div ng-if="!isUserDoctor && isUserDoctor!== undefined">
+     <div class="row">
+        <div class="col-xs-6">
+          Select specialization:
+        </div>
+        <div class="col-xs-6">
+          <select class="form-control" ng-model="specialization" ng-change="displayDoctorsForSelectedCategory(specialization)">
+            <option ng-repeat="category in categories" value="{{category.id}}">
+			{{category.specialization}}
+          </select>
+        </div>
+      </div>
+	  <div class="row" ng-if="!!specialization">
+        <div class="col-xs-12">
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="doctor in doctorsList" ng-click="displaySelectedDoctorDetails(doctor.id, oDate1)">
+				{{doctor.name}}
+			</li>
+          </ul>
+		  <p ng-if="!doctorsList.length">No doctors available on this specialization.</p>
+        </div>
+		<div class="col-xs-12" ng-if="!!selectedDoctor">
+			<div rm-datepicker ng-model="oDate1" rm-config="rmConfig1" ng-click="selectDate(oDate1)" class="rm-datepicker-div"></div>
+			<h4>Booking Slots for {{oDate1 | date: 'yyyy-MM-dd'}}<h4>
+			<table class="table table-striped table-bordered">
+			<thead>
+				<tr>
+					<th>Time Slot</th>
+					<th>Details</th>
+                    <th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="slot in doctorSlots">
+					<td>{{slot.time}}</td>
+					<td>
+						<button type="button" ng-if="!slot.selected" class="btn btn-primary" data-toggle="modal" data-target="#confirmBooking{{$index+1}}">Available</button>
+						<button type="button" ng-if="slot.selected" class="btn btn-secondary">Booked</button>
+						<!-- confirm modal -->
+					  <div class="modal fade" id="confirmBooking{{$index+1}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Confirm booking this slot?</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-lable="close">
+									</button>
+								</div>
+								<div class="modal-body">
+									Click Yes to confirm your slot and No to cancel booking.
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" ng-click="bookSlotForDoctor(slot, $index)">YES</button>
+									<button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+								</div>
+							</div>
+						</div>
+					  </div>
+					</td>
+                    <td>
+                        <button class="btn btn-primary" disabled="disabled" ng-if="!slot.selected" type="button">
+                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-primary" ng-if="slot.selected" type="button" ng-click="newPatientChatStart()">
+                            <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                        </button>
+                    </td>
+				</tr>
+			</tbody>
+		  </table>
+		  
+        </div>
+      </div>
+	  </div>
+	  <!-- Section for doctor home display -->
+	  <div ng-if="!!isUserDoctor">
+		<div class="card">
+
+			<h1 class="card-title">Check your appointments here</h1>
+			<div class="card-body">
+				<!--<div rm-datepicker ng-model="oDate1" ng-click="getDoctorAppointments(oDate1)" rm-config="rmConfig1" class="rm-datepicker-div"></div>-->
+				<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Patient Name</th>
+						<th>Date</th>
+						<th>Slot</th>
+						<th>Chat</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-if="!patientSlots.length"><td colspan="4">No appointments available</td></tr>
+					<tr ng-repeat="detail in patientSlots">
+						<td>{{detail.patientName}}</td>
+						<td>{{detail.appointmentDate}}</td>
+						<td>{{detail.startTime + ' - ' + detail.endTime}}</td>
+						<td>
+							<!-- <button type="button" class="btn btn-info" ng-click="startPatientVideoCall(detail)">
+								<span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+								<span class="hidden-sm hidden-xs">Video</span>
+							  </button>-->
+                              <button class="btn btn-primary" type="button" ng-click="newChatStart(detail)">
+                              <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                            </button>
+						</td>
+					</tr>
+				</tbody>
+				</table>
+			</div>
+		</div>
+	  </div>
+
+
+      <!-- Welcome page -->
+        <div id="welcome" class="hidden fh">
+          <div class="intro">
+            <h1>Welcome!</h1>
+            <p class="lead">Try Bit6 awesomeness right in your browser.</p>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-offset-3 col-md-offset-4 col-sm-6 col-md-4">
+
+              <div class="bg-danger" id="authError"></div>
+
+              <form role="form">
+                <div class="form-group">
+                  <input type="hidden" class="form-control" id="authUsername" placeholder="Username">
+                </div>
+                <div class="form-group">
+                  <input type="hidden" class="form-control" id="authPassword" placeholder="Password">
+                </div>
+                <button class="btn btn-primary hidden" id="loginButton">Login</button>
+                <button class="btn btn-info hidden" id="signupButton">Sign Up</button>
+              </form>
+
+            </div>
+          </div><!-- /.row -->
+
+      </div><!-- /#welcome -->
+
+      <!-- Main Page -->
+      <div id="main" class="hidden fh">
+
+          <!-- Incoming Call alert -->
+          <div class="alert alert-warning fade in" id="incomingCall">
+            <h4 id="incomingCallFrom">John is calling...</h4>
+            <p id="incomingCallInfo">Do you dare to answer this call?</p>
+            <p>
+              <button type="button" class="btn btn-success" id="answerVideo">Video</button>
+              <button type="button" class="btn btn-success" id="answerAudio">Audio</button>
+              <button type="button" class="btn btn-danger" id="reject">Reject</button>
+            </p>
+          </div>
+
+
+          <div class="row fh">
+
+            <!-- col1 -->
+            <div class="col-sm-4 fh" id="listPane">
+
+              <div class="row top-row">
+
+                <div class="col-xs-6">
+                  <h3>Chats</h3>
+                </div>
+
+                <div class="col-xs-6">
+                  <!-- New Chat dropdown -->
+                  <ul class="nav nav-pills pull-right">
+                    <li class="dropdown" id="newChatDropdown">
+                      <a id="drop1" role="button" data-toggle="dropdown">New
+                          <b class="caret"></b></a>
+                      <div class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="drop1">
+                        <h4>Direct Chat</h4>
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="newChatUsername" placeholder="Username" autocomplete="off">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button" id="newChatStart">
+                              <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                            </button>
+                          </span>
+                        </div><!-- /input-group -->
+
+                        <h4>New Group</h4>
+                        <div class="input-group">
+                          <input type="text" class="form-control" id="newGroupTitle" placeholder="Group title" autocomplete="off">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button" id="newGroupCreate">
+                              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            </button>
+                          </span>
+                        </div><!-- /input-group -->
+
+                      </div>
+                    </li>
+                  </ul> <!-- /pills -->
+                </div>
+
+              </div>
+
+              <div class="row" id="chatListRow">
+                <div class="chats" id="chatList"></div>
+              </div>
+
+            </div><!-- /col1 -->
+
+
+            <!-- col2 -->
+            <div class="col-sm-8 fh" id="detailPane">
+
+              <div class="row top-row">
+                <div class="col-sm-5 col-xs-5">
+                  <button class="btn btn-default pull-left visible-xs" id="backToList">
+                    <span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>
+                  </button>
+                  <h3 id="chatTitle"></h3>
+                </div>
+                <div class="col-sm-7 col-xs-7">
+                  <div id="chatButtons" class="pull-right">
+
+                    <!-- Audio Call -->
+                    <button class="btn btn-info" id="audioCallButton">
+                      <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                      <span class="hidden-sm hidden-xs">Audio</span>
+                    </button>
+                     <!-- Video Call Options -->
+                     <div class="btn-group" >
+
+                      <button type="button" class="btn btn-info" id="videoCallDefault" >
+                        <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+                        <span class="hidden-sm hidden-xs">Video</span>
+                      </button>
+
+                      <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="caret"></span>
+                        <span class="sr-only"></span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a id="videoCallFrontCam">Front Camera</a></li>
+                        <li><a id="videoCallBackCam">Back Camera</a></li>
+                      </ul>
+                    </div>
+                    <!-- Conversation options -->
+                    <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                      <span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                      <li><a id="mediaModeButton">Media mode: P2P</a></li>
+                      <li><a id="screenCallButton">Share screen</a></li>
+                      <li><a  id="groupInfoButton">Group details</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li><a id="deleteChatButton">Delete messages</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" id="msgListRow">
+                <div id="msgList"></div>
+              </div>
+
+              <!-- Compose message area -->
+              <div class="row" id="msgComposeRow">
+                <div class="col-sm-4">
+                  <div class="bg-info" id="msgOtherTyping"></div>
+                </div>
+                <div class="col-sm-8">
+                  <div class="input-group">
+                    <span class="input-group-btn">
+                      <span class="btn btn-default btn-file">
+                        <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>
+                        <input type="file" id="attachFile" />
+                      </span>
+                    </span>
+                    <input type="text" class="form-control" id="msgText" placeholder="Type message">
+                    <span class="input-group-btn">
+                      <button class="btn btn-primary" type="button" id="sendMsgButton">
+                        <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                      </button>
+                    </span>
+                  </div><!-- /input-group -->
+                </div>
+              </div><!-- /.row -->
+
+            </div><!-- /col2 -->
+
+
+            <!-- col3 -->
+            <div class="col-sm-8 fh hidden" id="inCallPane">
+              <div class="row top-row">
+                <div class="col-sm-7 col-xs-7">
+                  <h3 id="inCallOther">Video Call</h3>
+                </div>
+                <div class="col-sm-5 col-xs-5">
+                  <div class="pull-right">
+                    <button class="btn btn-default" id="incallRecord" data-toggle="button" autocomplete="off">
+                      <span class="glyphicon glyphicon-record" aria-hidden="true"></span>
+                      <span class="visible-lg-inline">Record</span>
+                    </button>
+                    <button class="btn btn-default" id="incallVideo" data-toggle="button" autocomplete="off">
+                      <span class="glyphicon glyphicon-facetime-video" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-default hidden-xs" id="incallScreen" data-toggle="button" autocomplete="off">
+                      <span class="glyphicon glyphicon-share" aria-hidden="true"></span>
+                    </button>
+                    <button class="btn btn-danger" id="hangup">
+                      <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                      <span class="hidden-xs hidden-sm">Hangup</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" id="videoContainer"></div>
+
+            </div><!-- /col3 -->
+
+
+          </div><!-- /.row -->
+
+
+      </div><!-- /#main -->
+      
+  </div>
+</div>
